@@ -1,0 +1,89 @@
+START
+    MAX_AGE_RANGE = (0,80)
+    DEFAULT_PRICES = {
+        child = 10.99,
+        adult = 18.88,
+        senior = 15.99
+    }
+    DEFAULT_MATINEE = {
+        time = 1700
+        discount = 0.15
+    }
+    DEFAULT_TAX = 0.08
+
+    FUNCTION get_age (age = None)
+        IF NO age THEN 
+            OUTPUT "please enter your age in years:"
+            INPUT age
+        END IF
+        TRY convert age FROM string TO int 
+        CATCH 
+            OUTPUT "Age must be a number"
+            RETURN get_age()
+        END TRY
+        IF age > MAX_AGE_RANGE[1] OR age < MAX_AGE_RANGE[0]
+            OUTPUT "Invalid age. Please enter a value between MAX_AGE_RANGE[0] and MAX_AGE_RANGE[1]!"
+            RETURN get_age()
+        END IF
+        RETURN age
+    END FUNCTION
+
+    FUNCTION get_time (time = None)
+        IF NO time THEN 
+            OUTPUT "Please enter the show-time in 24-hour format (e.g. 1700 for 5:00 PM):"
+            INPUT time
+        END IF
+        TRY convert time FROM string TO int 
+        CATCH
+                OUTPUT "Time must be a number!"
+                RETURN get_time()
+        END TRY
+        IF time < 0000 OR time > 2400
+            OUTPUT "Invalid time, must be a number between 0000 and 2400."
+            RETURN get_time()
+        END IF
+
+        RETURN time
+    END FUNCTION
+
+    FUNCTION get_price(age, time)
+        price = {
+            base: 0.0
+            discount: 0.0
+            tax: DEFAULT_TAX
+            total: 0.0
+        }
+        IF age <= 12 THEN
+            price[base] = DEFAULT_PRICES[child]
+        ELIF age >= 60 THEN
+            price[base] = DEFAULT_PRICES[senior]
+        ELSE
+            price[base] = DEFAULT_PRICES[adult]
+        END IF
+
+        price[total] = price[base]
+
+        IF time < DEFAULT_MATINEE[time] THEN
+            price[discount] = price[base] * DEFAULT_MATINEE[discount]
+            price[total] = price[base] - price[discount]
+        END IF
+
+        price[tax] = price[total] * DEFAULT_TAX
+        price[total] = price[total] + price[tax]
+
+        RETURN price
+    END FUNCTION
+
+    FUNCTION print_price(base, discount, tax, total)
+        OUTPUT "--------------"
+        OUTPUT "Your base ticket price =" + base 
+        OUTPUT "Discount applied =" + discount
+        OUTPUT "Tax =" + tax
+        OUTPUT "Your final ticket price =" + total 
+    END FUNCTION
+
+    age = get_age()
+    time = get_time()
+    price = get_price(age, time)
+    print_price(price)
+END
