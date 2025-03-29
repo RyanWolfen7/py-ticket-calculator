@@ -1,5 +1,5 @@
 """
-Description: This program calculates the target heart rate based on the user's age and exercise intensity levels.
+Description: This program calculates the total ticket price for a movie based on the user's age and the showtime. It includes features such as discounts for matinee shows and tax calculations.
 Name: Ryan Clark
 Date: 03/29/2025
 Assignment: Week 3 - Programming Assignment 3
